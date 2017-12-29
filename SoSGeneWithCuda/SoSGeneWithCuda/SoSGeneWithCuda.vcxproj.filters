@@ -8,10 +8,10 @@
     <CudaCompile Include="SoSGeneWithCuda.cu">
       <Filter>api</Filter>
     </CudaCompile>
-    <CudaCompile Include="GridDimUtils.cu">
+    <CudaCompile Include="CudaRandUtils.cu">
       <Filter>common</Filter>
     </CudaCompile>
-    <CudaCompile Include="CudaRandUtils.cu">
+    <CudaCompile Include="CudaCommonUtils.cu">
       <Filter>common</Filter>
     </CudaCompile>
   </ItemGroup>
@@ -22,10 +22,10 @@
     <ClInclude Include="SoSGeneWithCuda.h">
       <Filter>api</Filter>
     </ClInclude>
-    <ClInclude Include="GridDimUtils.cuh">
+    <ClInclude Include="CudaRandUtils.cuh">
       <Filter>common</Filter>
     </ClInclude>
-    <ClInclude Include="CudaRandUtils.cuh">
+    <ClInclude Include="CudaCommonUtils.cuh">
       <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>

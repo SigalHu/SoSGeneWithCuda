@@ -13,14 +13,14 @@
   <ItemGroup>
     <CudaCompile Include="CudaRandUtils.cu" />
     <CudaCompile Include="DevSoSGeneWithCuda.cu" />
-    <CudaCompile Include="GridDimUtils.cu" />
+    <CudaCompile Include="CudaCommonUtils.cu" />
     <CudaCompile Include="main.cu" />
     <CudaCompile Include="SoSGeneWithCuda.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CudaRandUtils.cuh" />
     <ClInclude Include="DevSoSGeneWithCuda.cuh" />
-    <ClInclude Include="GridDimUtils.cuh" />
+    <ClInclude Include="CudaCommonUtils.cuh" />
     <ClInclude Include="SoSGeneWithCuda.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

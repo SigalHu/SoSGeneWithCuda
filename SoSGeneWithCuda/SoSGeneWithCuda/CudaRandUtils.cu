@@ -1,5 +1,6 @@
 #include <ctime>
 #include <string>
+#include <iostream>
 #include "CudaRandUtils.cuh"
 
 namespace CudaRandUtils{
@@ -39,55 +40,43 @@ namespace CudaRandUtils{
 	bool createGenerator(curandGenerator_t &generator, curandRngType_t rng_type){
 		curandStatus_t status = curandCreateGenerator(&generator, rng_type);
 		if (CURAND_STATUS_SUCCESS != status){
-			std::cerr << "#######################################" << std::endl;
-			std::cerr << "curandCreateGenerator launch failed!" << std::endl;
+			std::cerr << "curandCreateGenerator调用失败！" << std::endl;
 			std::cerr << getStatusStr(status) << std::endl;
-			std::cerr << "#######################################" << std::endl;
 			return false;
 		}
 
 		status = curandSetPseudoRandomGeneratorSeed(generator, time(NULL));
 		if (CURAND_STATUS_SUCCESS != status){
-			std::cerr << "#######################################" << std::endl;
-			std::cerr << "curandSetPseudoRandomGeneratorSeed launch failed!" << std::endl;
+			std::cerr << "curandSetPseudoRandomGeneratorSeed调用失败！" << std::endl;
 			std::cerr << getStatusStr(status) << std::endl;
-			std::cerr << "#######################################" << std::endl;
 			return false;
 		}
 		return true;
 	}
 
-	bool generateNormal(thrust::device_vector<float> &dv, float mean, float stddev){
+	bool generateNormal(float *dev_array, size_t length, float mean, float stddev){
 		curandGenerator_t generator;
 		if (!createGenerator(generator, CURAND_RNG_PSEUDO_DEFAULT))
 			return false;
 
-		float *p = thrust::raw_pointer_cast(dv.data());
-		unsigned int len = dv.size();
-		curandStatus_t status = curandGenerateNormal(generator, p, len, mean, stddev);
+		curandStatus_t status = curandGenerateNormal(generator, dev_array, length, mean, stddev);
 		if (CURAND_STATUS_SUCCESS != status){
-			std::cerr << "#######################################" << std::endl;
-			std::cerr << "curandGenerateNormal launch failed!" << std::endl;
+			std::cerr << "curandGenerateNormal调用失败！" << std::endl;
 			std::cerr << getStatusStr(status) << std::endl;
-			std::cerr << "#######################################" << std::endl;
 			return false;
 		}
 		return true;
 	}
 
-	bool generateUniform(thrust::device_vector<float> &dv){
+	bool generateUniform(float *dev_array, size_t length){
 		curandGenerator_t generator;
 		if (!createGenerator(generator, CURAND_RNG_PSEUDO_DEFAULT))
 			return false;
 
-		float *p = thrust::raw_pointer_cast(dv.data());
-		unsigned int len = dv.size();
-		curandStatus_t status = curandGenerateUniform(generator, p, len);
+		curandStatus_t status = curandGenerateUniform(generator, dev_array, length);
 		if (CURAND_STATUS_SUCCESS != status){
-			std::cerr << "#######################################" << std::endl;
-			std::cerr << "curandGenerateUniform launch failed!" << std::endl;
+			std::cerr << "curandGenerateUniform调用失败！" << std::endl;
 			std::cerr << getStatusStr(status) << std::endl;
-			std::cerr << "#######################################" << std::endl;
 			return false;
 		}
 		return true;

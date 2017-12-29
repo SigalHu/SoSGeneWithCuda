@@ -1,49 +1,198 @@
-#include "thrust\host_vector.h"
 #include "SoSGeneWithCuda.h"
 #include <iostream>
+#include <ctime>
+#include <string>
+
+enum FadingType { gaussian, gaussian2, lognormal, nakagami, nakagami2, lognak };
 
 int main()
 {
-	unsigned int deviceId = 0;
-	cudaError_t cudaStatus = cudaSetDevice(deviceId);
-	if (cudaStatus != cudaSuccess) {
-		std::cout << "cudaSetDevice failed!  Do you have a CUDA-capable GPU installed?" << std::endl;
-		std::cin.get();
-		return 0;
-	}
+	FadingType fading_type = nakagami2;
 
-	{
+	switch (fading_type){
+	case gaussian:{
 		const float fs = 1000;
+		const float fd_max = 50;
 		const float time_spend = 1000;
-		const unsigned int len = (unsigned int)(fs*time_spend);
-		thrust::device_vector<float> devNoiseI(len);
-		thrust::device_vector<float> devNoiseQ(len);
+		const unsigned int path_num = 32;
+		const float mean = 0;
+		const float variance = 1;
+		const float delta_omega = 0;
 
-		if (!noiseGene(deviceId, devNoiseI, devNoiseQ, fs)){
-			std::cout << "noiseGene failed!" << std::endl;
-			std::cin.get();
-			return 1;
+		float *arr = NULL;
+		size_t length;
+		clock_t start, stop;
+
+		start = clock();
+		if (!gaussianGene(arr, length, fs, fd_max, time_spend, path_num, mean, variance, delta_omega) && arr != NULL){
+			std::cerr << "gaussianGene调用失败！" << std::endl;
+			break;
 		}
-		std::cout << "noiseGene succeed!" << std::endl;
+		stop = clock();
 
-		thrust::host_vector<float> hostNoiseI(devNoiseI);
-		thrust::host_vector<float> hostNoiseQ(devNoiseQ);
+		std::cout << "gaussianGene调用成功！" << std::endl;
+		std::cout << "所花时间：" << stop - start << "ms" << std::endl;
 
-		std::cout << hostNoiseI.front() << "->" << hostNoiseI.back() << std::endl;
-		for (int ii = 0; ii < hostNoiseI.size(); ++ii){
-			if (ii != hostNoiseI[ii]){
-				std::cout << "is false!" << std::endl;
-				break;
-			}
+		FILE *fp = fopen("gaussian.bin", "wb");
+		if (fp){
+			fwrite(arr, sizeof(float), length, fp);
+			fclose(fp);
 		}
+		break;
+	}
+	case gaussian2:{
+		const float fs = 1000;
+		const float fd_max = 50;
+		const float time_spend = 1000;
+		const unsigned int path_num = 32;
+		const float delta_omega = 0;
+
+		float *arr_i = NULL;
+		float *arr_q = NULL;
+		size_t length;
+		clock_t start, stop;
+
+		start = clock();
+		if (!gaussianGene2(arr_i, arr_q, length, fs, fd_max, time_spend, path_num, delta_omega) && arr_i != NULL && arr_q != NULL){
+			std::cerr << "gaussianGene2调用失败！" << std::endl;
+			break;
+		}
+		stop = clock();
+
+		std::cout << "gaussianGene2调用成功！" << std::endl;
+		std::cout << "所花时间：" << stop - start << "ms" << std::endl;
+
+		FILE *fp = fopen("gaussian2.bin", "wb");
+		if (fp){
+			fwrite(arr_i, sizeof(float), length, fp);
+			fwrite(arr_q, sizeof(float), length, fp);
+			fclose(fp);
+		}
+		break;
+	}
+	case lognormal:{
+		const float fs = 1000;
+		const float fd_max = 50;
+		const float time_spend = 1000;
+		const unsigned int path_num = 32;
+		const float mean = 0;
+		const float variance = 1;
+		const float delta_omega = 0;
+
+		float *arr = NULL;
+		size_t length;
+		clock_t start, stop;
+
+		start = clock();
+		if (!lognormalGene(arr, length, fs, fd_max, time_spend, path_num, mean, variance, delta_omega) && arr != NULL){
+			std::cerr << "lognormalGene调用失败！" << std::endl;
+			break;
+		}
+		stop = clock();
+
+		std::cout << "lognormalGene调用成功！" << std::endl;
+		std::cout << "所花时间：" << stop - start << "ms" << std::endl;
+
+		FILE *fp = fopen("lognormal.bin", "wb");
+		if (fp){
+			fwrite(arr, sizeof(float), length, fp);
+			fclose(fp);
+		}
+		break;
+	}
+	case nakagami:{
+		const float fs = 1000;
+		const float fd_max = 50;
+		const float time_spend = 100;
+		const unsigned int path_num = 32;
+		const float nak_m = 4;
+		const float nak_omega = 1;
+		const float delta_omega = 0;
+
+		float *arr = NULL;
+		size_t length;
+		clock_t start, stop;
+
+		start = clock();
+		if (!nakagamiGene(arr, length, fs, fd_max, time_spend, path_num, nak_m, nak_omega, delta_omega) && arr != NULL){
+			std::cerr << "nakagamiGene调用失败！" << std::endl;
+			break;
+		}
+		stop = clock();
+
+		std::cout << "nakagamiGene调用成功！" << std::endl;
+		std::cout << "所花时间：" << stop - start << "ms" << std::endl;
+
+		FILE *fp = fopen("nakagami.bin", "wb");
+		if (fp){
+			fwrite(arr, sizeof(float), length, fp);
+			fclose(fp);
+		}
+		break;
+	}
+	case nakagami2:{
+		const float fs = 1000;
+		const float fd_max = 50;
+		const float time_spend = 100;
+		const unsigned int path_num = 32;
+		const float nak_m = 1;
+		const float nak_omega = 1;
+		const float delta_omega = 0;
+
+		float *arr = NULL;
+		size_t length;
+		clock_t start, stop;
+
+		start = clock();
+		if (!nakagamiGene2(arr, length, fs, fd_max, time_spend, path_num, nak_m, nak_omega, delta_omega) && arr != NULL){
+			std::cerr << "nakagamiGene2调用失败！" << std::endl;
+			break;
+		}
+		stop = clock();
+
+		std::cout << "nakagamiGene2调用成功！" << std::endl;
+		std::cout << "所花时间：" << stop - start << "ms" << std::endl;
+
+		FILE *fp = fopen("nakagami.bin", "wb");
+		if (fp){
+			fwrite(arr, sizeof(float), length, fp);
+			fclose(fp);
+		}
+		break;
+	}
+	case lognak:{
+		const float fs = 1000;
+		const float fd_max = 50;
+		const float time_spend = 1000;
+		const unsigned int path_num = 32;
+		const float nak_m = 10.3;
+		const float shadow_db = 3.2;
+		const float power_avg = 1;
+		const float delta_omega = 0;
+
+		float *arr = NULL;
+		size_t length;
+		clock_t start, stop;
+
+		start = clock();
+		if (!lognakGene(arr, length, fs, fd_max, time_spend, path_num, nak_m, shadow_db, power_avg, delta_omega) && arr != NULL){
+			std::cerr << "lognakGene调用失败！" << std::endl;
+			break;
+		}
+		stop = clock();
+
+		std::cout << "lognakGene调用成功！" << std::endl;
+		std::cout << "所花时间：" << stop - start << "ms" << std::endl;
+
+		FILE *fp = fopen("lognak.bin", "wb");
+		if (fp){
+			fwrite(arr, sizeof(float), length, fp);
+			fclose(fp);
+		}
+		break;
+	}
 	}
 
-	cudaStatus = cudaDeviceReset();
-	if (cudaStatus != cudaSuccess) {
-		std::cout << "cudaDeviceReset failed!" << std::endl;
-		std::cin.get();
-		return 1;
-	}
 	std::cin.get();
 	return 0;
 }

@@ -1,8 +1,20 @@
 #pragma once
-#include "cuda_runtime.h"
-#include "thrust\device_vector.h"
 
-cudaError_t addWithCuda(thrust::device_vector<int> &c, thrust::device_vector<int> &a, thrust::device_vector<int> &b, unsigned int size);
+bool gaussianGene(float *&arr, size_t &length, const float &fs = 1000, const float &fd_max = 50, const float &time_spend = 1,
+	const unsigned int &path_num = 32, const float &mean = 0, const float &variance = 1, const float &delta_omega = 0);
 
-bool noiseGene(const unsigned int &deviceId, thrust::device_vector<float> &dvNoiseI, thrust::device_vector<float> &dvNoiseQ, const float &fs,
-	const float &avgPower = 1, const unsigned int &pathNum = 32, const float &maxFd = 50, const float &deltaOmega = 0);
+bool gaussianGene2(float *&arr_i, float *&arr_q, size_t &length, const float &fs = 1000, const float &fd_max = 50, 
+	const float &time_spend = 1, const unsigned int &path_num = 32, const float &delta_omega = 0);
+
+bool lognormalGene(float *&arr, size_t &length, const float &fs = 1000, const float &fd_max = 50, const float &time_spend = 1,
+	const unsigned int &path_num = 32, const float &mean = 0, const float &variance = 1, const float &delta_omega = 0);
+
+bool nakagamiGene(float *&arr, size_t &length, const float &fs = 1000, const float &fd_max = 50, const float &time_spend = 1,
+	const unsigned int &path_num = 32, const float &nak_m = 1, const float &nak_omega = 1, const float &delta_omega = 0);
+
+bool nakagamiGene2(float *&arr, size_t &length, const float &fs = 1000, const float &fd_max = 50, const float &time_spend = 1,
+	const unsigned int &path_num = 32, const float &nak_m = 1, const float &nak_omega = 1, const float &delta_omega = 0);
+
+bool lognakGene(float *&arr, size_t &length, const float &fs = 1000, const float &fd_max = 50, const float &time_spend = 1, 
+	const unsigned int &path_num = 32, const float &nak_m = 1, const float &shadow_db = 1, const float &power_avg = 1, 
+	const float &delta_omega = 0);
