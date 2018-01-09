@@ -3,11 +3,11 @@
 #include <ctime>
 #include <string>
 
-enum FadingType { gaussian, gaussian2, lognormal, nakagami, nakagami2, lognak };
+enum FadingType { gaussian, gaussianIQ, lognormal, nakagami, nakagami2, nakagamiIQ, lognak, lognakIQ };
 
 int main()
 {
-	FadingType fading_type = nakagami2;
+	FadingType fading_type = lognakIQ;
 
 	switch (fading_type){
 	case gaussian:{
@@ -40,7 +40,7 @@ int main()
 		}
 		break;
 	}
-	case gaussian2:{
+	case gaussianIQ:{
 		const float fs = 1000;
 		const float fd_max = 50;
 		const float time_spend = 1000;
@@ -53,7 +53,7 @@ int main()
 		clock_t start, stop;
 
 		start = clock();
-		if (!gaussianGene2(arr_i, arr_q, length, fs, fd_max, time_spend, path_num, delta_omega) && arr_i != NULL && arr_q != NULL){
+		if (!gaussianGeneIQ(arr_i, arr_q, length, fs, fd_max, time_spend, path_num, delta_omega) && arr_i != NULL && arr_q != NULL){
 			std::cerr << "gaussianGene2调用失败！" << std::endl;
 			break;
 		}
@@ -62,7 +62,7 @@ int main()
 		std::cout << "gaussianGene2调用成功！" << std::endl;
 		std::cout << "所花时间：" << stop - start << "ms" << std::endl;
 
-		FILE *fp = fopen("gaussian2.bin", "wb");
+		FILE *fp = fopen("gaussianIQ.bin", "wb");
 		if (fp){
 			fwrite(arr_i, sizeof(float), length, fp);
 			fwrite(arr_q, sizeof(float), length, fp);
@@ -160,13 +160,45 @@ int main()
 		}
 		break;
 	}
+	case nakagamiIQ:{
+		const float fs = 1000;
+		const float fd_max = 50;
+		const float time_spend = 100;
+		const unsigned int path_num = 32;
+		const float nak_m = 1;
+		const float nak_omega = 1;
+		const float delta_omega = 0;
+
+		float *arr_i = NULL;
+		float *arr_q = NULL;
+		size_t length;
+		clock_t start, stop;
+
+		start = clock();
+		if (!nakagamiGeneIQ(arr_i, arr_q, length, fs, fd_max, time_spend, path_num, nak_m, nak_omega, delta_omega) && arr_i != NULL && arr_q != NULL){
+			std::cerr << "nakagamiGeneIQ调用失败！" << std::endl;
+			break;
+		}
+		stop = clock();
+
+		std::cout << "nakagamiGeneIQ调用成功！" << std::endl;
+		std::cout << "所花时间：" << stop - start << "ms" << std::endl;
+
+		FILE *fp = fopen("nakagamiIQ.bin", "wb");
+		if (fp){
+			fwrite(arr_i, sizeof(float), length, fp);
+			fwrite(arr_q, sizeof(float), length, fp);
+			fclose(fp);
+		}
+		break;
+	}
 	case lognak:{
 		const float fs = 1000;
 		const float fd_max = 50;
-		const float time_spend = 1000;
-		const unsigned int path_num = 32;
-		const float nak_m = 10.3;
-		const float shadow_db = 3.2;
+		const float time_spend = 100;
+		const unsigned int path_num = 128;
+		const float nak_m = 9.6;
+		const float shadow_db = 4.2;
 		const float power_avg = 1;
 		const float delta_omega = 0;
 
@@ -187,6 +219,39 @@ int main()
 		FILE *fp = fopen("lognak.bin", "wb");
 		if (fp){
 			fwrite(arr, sizeof(float), length, fp);
+			fclose(fp);
+		}
+		break;
+	}
+	case lognakIQ:{
+		const float fs = 1000;
+		const float fd_max = 50;
+		const float time_spend = 100;
+		const unsigned int path_num = 32;
+		const float nak_m = 9.6;
+		const float shadow_db = 4.2;
+		const float power_avg = 1;
+		const float delta_omega = 0;
+
+		float *arr_i = NULL;
+		float *arr_q = NULL;
+		size_t length;
+		clock_t start, stop;
+
+		start = clock();
+		if (!lognakGeneIQ(arr_i, arr_q, length, fs, fd_max, time_spend, path_num, nak_m, shadow_db, power_avg, delta_omega) && arr_i != NULL && arr_q != NULL){
+			std::cerr << "lognakGeneIQ调用失败！" << std::endl;
+			break;
+		}
+		stop = clock();
+
+		std::cout << "lognakGeneIQ调用成功！" << std::endl;
+		std::cout << "所花时间：" << stop - start << "ms" << std::endl;
+
+		FILE *fp = fopen("lognakIQ.bin", "wb");
+		if (fp){
+			fwrite(arr_i, sizeof(float), length, fp);
+			fwrite(arr_q, sizeof(float), length, fp);
 			fclose(fp);
 		}
 		break;

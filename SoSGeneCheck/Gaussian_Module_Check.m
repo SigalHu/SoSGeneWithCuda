@@ -9,7 +9,7 @@ var_2 = 1;% 功率
 delta_omega = 0; % 多普勒频率随机偏移量
 plot_flag = 1;
 
-fid = fopen("C:\Code\Team\SoSGeneWithCuda\SoSGeneWithCuda\x64\Release\gaussian.bin",'rb');
+fid = fopen("C:\Code\Team\SoSGeneWithCuda\SoSGeneWithCuda\SoSGeneWithCuda\gaussian.bin",'rb');
 H = fread(fid,inf,'float');
 fclose(fid);
 

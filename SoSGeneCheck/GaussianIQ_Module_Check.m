@@ -8,7 +8,7 @@ PSD = 0;
 delta_fd = 0;
 delta_omega = 0;
 
-fid = fopen("C:\Code\Team\SoSGeneWithCuda\SoSGeneWithCuda\x64\Release\gaussian2.bin",'rb');
+fid = fopen("C:\Code\Team\SoSGeneWithCuda\SoSGeneWithCuda\SoSGeneWithCuda\gaussianIQ.bin",'rb');
 H = fread(fid,inf,'float');
 fclose(fid);
 Hc = H(1:end/2);
