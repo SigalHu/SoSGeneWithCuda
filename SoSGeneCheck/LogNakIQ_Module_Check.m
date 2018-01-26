@@ -1,19 +1,19 @@
 close all;clear all;clc;
 plot_flag = 1;
 fs = 1000;
-fmax = 50; 
+fmax = 48.4; 
 endT = 100;    % 产生一个大周期的数据
 N_Path = 32; % 散射支路数
-Nak_m = 9.6;
+Nak_m = 10.3;
 Nak_omega = 1;
-Shadow_dB = 4.2;  
+Shadow_dB = 3.2;  
 Pavg = 1;
 
 sigX = Shadow_dB/8.686; 
 miuX = log(Pavg);
 var_2 = Nak_omega/2/Nak_m;
 
-fid = fopen("C:\Code\Team\SoSGeneWithCuda\SoSGeneWithCuda\SoSGeneWithCuda\lognakIQ.bin",'rb');
+fid = fopen("C:\Code\Team\SoSGeneWithCuda\SoSGeneWithCuda\x64\Release\lognakIQ1_2.bin",'rb');
 H = fread(fid,inf,'float').';
 fclose(fid);
 H_complex = H(1:end/2) + 1i*H(end/2+1:end);

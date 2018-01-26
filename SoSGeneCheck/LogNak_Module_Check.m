@@ -1,17 +1,17 @@
-close all;clear all;clc;
+% clear all;clc;close all;
 plot_flag = 1;
 fs = 1000;
 fd = 50; 
 endT = 100;    % 产生一个大周期的数据
 N_Path = 128; % 散射支路数
-Nak_m = 9.6;
-Shadow_dB = 4.2;  
+Nak_m = 11.3;
+Shadow_dB = 1.1;  
 Pavg = 1;
 
 sigX = Shadow_dB/8.686; 
 miuX = log(Pavg);
 
-fid = fopen("C:\Code\Team\SoSGeneWithCuda\SoSGeneWithCuda\SoSGeneWithCuda\lognak.bin",'rb');
+fid = fopen("C:\Code\Team\SoSGeneWithCuda\SoSGeneWithCuda\x64\Release\lognak1_7.bin",'rb');
 Nak_Lognorm_H = fread(fid,inf,'float');
 fclose(fid);
     
@@ -31,14 +31,20 @@ for m = 1:length(r)
     tmp = Nak_pdf_p(r(m),[start_afi:deta_afi:end_afi],Nak_m).*lognpdf([start_afi:deta_afi:end_afi],miuX,sigX);
     NakLogn_pdf(m) = (sum(tmp)-tmp(1)-tmp(end))*deta_afi;
 end
-figure
+
+figure;
+t = 1/fs : 1/fs : endT;
+plot(t, abs(H));xlim([0 1]);
+xlabel('t');ylabel('H(t)');
+    
+figure;
 pdf_stat = hist(Nak_Lognorm_H,r);
 plot(r,pdf_stat/(length(Nak_Lognorm_H)*(r(2)-r(1))),'*'); 
 hold on;
 plot(r,NakLogn_pdf);
-% hold on;
-% plot(r,GK_pdf(Nak_m,Gam_ms,Gam_ps,r),'.');
-legend('Sim','Nak-Longnorm');
+hold on;
+plot(r,GK_pdf(Nak_m,Gam_ms,Gam_ps,r),'.');
+legend('Sim','Nak-Longnorm','Nak-Gamma(G-K)');
 
 
 
